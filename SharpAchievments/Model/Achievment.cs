@@ -1,4 +1,4 @@
-﻿namespace AchievmentSystem.Model
+﻿namespace SharpAchievments.Model
 {
     using System;
     using System.Collections.Generic;
@@ -6,6 +6,16 @@
 
     public class Achievment
     {
+        public Achievment(string name = "", List<Rank> ranks = null, string group = "")
+        {
+            this.Name = name;
+            if (ranks != null)
+            {
+                this.Ranks = ranks;
+            }
+            this.Group = group;
+        }
+
         public string Group { get; set; } = "Common";
         public string Name { get; set; } = "";
         public List<Rank> Ranks { get; set; } = new List<Rank>();
@@ -16,7 +26,7 @@
 
         public override string ToString()
         {
-            return $"{Group}: {Name}";
+            return $"{this.Group}: {this.Name}";
         }
 
         public bool IsCompleted(ScoreData scoreData)
@@ -26,12 +36,12 @@
 
         public decimal GetPercentageCompleted(string rankName)
         {
-            var currentPos = GetRankPosition(rankName);
+            var currentPos = this.GetRankPosition(rankName);
             if (currentPos < 0)
             {
                 return 0;
             }
-            var maxPos = Ranks.Count();
+            var maxPos = this.Ranks.Count();
             if (maxPos == 0)
             {
                 return 0;
@@ -47,13 +57,13 @@
                 return 0;
             }
 
-            var rank = GetRank(rankName);
+            var rank = this.GetRank(rankName);
             if (rank == null)
             {
                 return 0;
             }
 
-            return Ranks.IndexOf(rank) + 1;
+            return this.Ranks.IndexOf(rank) + 1;
         }
 
         public bool IsLastRank(string rankName)
@@ -62,7 +72,7 @@
             {
                 return false;
             }
-            return Ranks.LastOrDefault()?.Name == rankName;
+            return this.Ranks.LastOrDefault()?.Name == rankName;
         }
 
         public Rank GetRank(string rankName)
@@ -71,12 +81,12 @@
             {
                 return null;
             }
-            return Ranks.FirstOrDefault(x => x.Name == rankName);
+            return this.Ranks.FirstOrDefault(x => x.Name == rankName);
         }
 
         public bool IsValidRank(string rankName)
         {
-            return GetRank(rankName) != null;
+            return this.GetRank(rankName) != null;
         }
     }
 }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32210.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AchievmentSystem", "AchievmentSystem\AchievmentSystem.csproj", "{4A22FC2F-D715-4299-B8B3-5564C21C0993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpAchievments", "SharpAchievments\SharpAchievments.csproj", "{4A22FC2F-D715-4299-B8B3-5564C21C0993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AchievmentSystem.Test", "AchievmentSystem.Test\AchievmentSystem.Test.csproj", "{CFBB850C-0BDE-4CBB-BB19-A6F64B5B5645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpAchievments.Test", "SharpAchievments.Test\SharpAchievments.Test.csproj", "{CFBB850C-0BDE-4CBB-BB19-A6F64B5B5645}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

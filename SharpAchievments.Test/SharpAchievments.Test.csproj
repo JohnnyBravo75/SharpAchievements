@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AchievmentSystem\AchievmentSystem.csproj" />
+    <ProjectReference Include="..\SharpAchievments\SharpAchievments.csproj" />
   </ItemGroup>
 
 </Project>

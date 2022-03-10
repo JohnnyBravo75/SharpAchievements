@@ -1,14 +1,18 @@
-﻿namespace AchievmentSystem
+﻿namespace SharpAchievments
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using AchievmentSystem.Model;
+    using SharpAchievments.Model;
 
     public class AchievmentData
     {
         private AchievmentDefinition achievmentDefinition;
+
+        public event EventHandler<string> AchievmentCompleted;
+        public event EventHandler<Tuple<string, string>> RankEarned;
+
 
         public AchievmentData(AchievmentDefinition achievmentDefinition)
         {
@@ -89,6 +93,7 @@
             return string.Empty;
         }
 
+
         public bool IsCompleted(string achievmentName)
         {
             var achievment = this.achievmentDefinition.GetAchievment(achievmentName);
@@ -102,12 +107,42 @@
             return achievment.IsCompleted(scoreData);
         }
 
+        public decimal GetPercentageCompleted(string achievmentName)
+        {
+            var achievment = this.achievmentDefinition.GetAchievment(achievmentName);
+            if (achievment == null)
+            {
+                return 0;
+            }
+
+            var scoreData = this.GetScoreData(achievmentName);
+
+            return achievment.GetPercentageCompleted(scoreData.EarnedRank);
+        }
+
+        public void SetCompleted(string achievmentName)
+        {
+            var achievment = this.achievmentDefinition.GetAchievment(achievmentName);
+            if (achievment == null)
+            {
+                return;
+            }
+
+            var lastRank = achievment.Ranks.LastOrDefault();
+            if (lastRank == null)
+            {
+                return;
+            }
+
+            this.EarnRank(achievmentName, lastRank.Name);
+        }
+
         private void EarnRankFromScore(string achievmentName, ScoreData scoreData)
         {
             var rank = this.GetRankFromScore(achievmentName, scoreData.Score);
             if (rank != null)
             {
-                scoreData.EarnedRank = rank.Name;
+                this.SetRank(scoreData, rank.Name);
             }
         }
 
@@ -151,19 +186,34 @@
 
             var scoreData = this.GetScoreData(achievmentName);
 
-            if (scoreData != null)
-            {
-                scoreData.EarnedRank = rankName;
-            }
-            else
+            if (scoreData == null)
             {
                 scoreData = new ScoreData()
                 {
                     AchievmentName = achievmentName,
-                    EarnedRank = rankName
                 };
-
                 this.Scores.Add(scoreData);
+            }
+
+           
+            this.SetRank(scoreData, rankName);
+            
+        }
+
+        private void SetRank(ScoreData scoreData, string rankName)
+        {
+            if (scoreData.EarnedRank != rankName)
+            {
+                var wasCompleted = this.IsCompleted(scoreData.AchievmentName);
+
+                scoreData.EarnedRank = rankName;
+
+                this.RankEarned?.Invoke(this, new Tuple<string, string>(scoreData.AchievmentName, rankName));
+                
+                if (!wasCompleted && this.IsCompleted(scoreData.AchievmentName))
+                {
+                    this.AchievmentCompleted?.Invoke(this, scoreData.AchievmentName);
+                }
             }
         }
 

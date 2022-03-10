@@ -1,4 +1,4 @@
-﻿namespace AchievmentSystem.Model
+﻿namespace SharpAchievments.Model
 {
     public class Rank
     {
@@ -12,7 +12,7 @@
 
         public override string ToString()
         {
-            return $"{Order} {Name}: {Score}";
+            return $"{this.Order} {this.Name}: {this.Score}";
         }
     }
 }

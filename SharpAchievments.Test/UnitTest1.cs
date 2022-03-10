@@ -1,12 +1,23 @@
-namespace AchievmentSystem.Test
+namespace SharpAchievments.Test
 {
-    using AchievmentSystem.Model;
+    using System.Diagnostics;
+    using SharpAchievments.Model;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using SharpAchievments;
+
+    public class AchievmentGroups
+    {
+        public const string COMBAT = "Combat";
+        public const string STEALTH = "Stealth";
+    }
 
     public class AchievmentNames
     {
-        public const string FILECOPYMASTER = "FilesCopyMaster";
-        public const string DOUBLETKILLER = "DoubletKiller";
+        public const string PYROMANIC = "Pyromanic";
+        public const string EXECUTIONER = "Executioner";
+
+        public const string SNIPER = "Sniper";
+        public const string ASSASSIN = "Assassin";
     }
 
     public class RankNames
@@ -26,7 +37,8 @@ namespace AchievmentSystem.Test
             var achievmentDefinition = new AchievmentDefinition();
             achievmentDefinition.Achievments.Add(new Achievment()
             {
-                Name = AchievmentNames.FILECOPYMASTER,
+                Name = AchievmentNames.PYROMANIC,
+                Group = AchievmentGroups.COMBAT,
                 Ranks = { new Rank()
                                 {
                                     Name=RankNames.COMPLETED,
@@ -37,7 +49,8 @@ namespace AchievmentSystem.Test
 
             achievmentDefinition.Achievments.Add(new Achievment()
             {
-                Name = AchievmentNames.DOUBLETKILLER,
+                Name = AchievmentNames.EXECUTIONER,
+                Group = AchievmentGroups.COMBAT,
                 Ranks = {       new Rank()
                                 {   Order = 1,
                                     Name=RankNames.BRONZE,
@@ -70,12 +83,37 @@ namespace AchievmentSystem.Test
 
             var achievmentData = new AchievmentData(achievmentDefinition);
 
-            achievmentData.AddScore(AchievmentNames.FILECOPYMASTER, 15);
-            achievmentData.AddScore(AchievmentNames.FILECOPYMASTER, 15);
-            achievmentData.AddScore(AchievmentNames.DOUBLETKILLER, 23);
-            achievmentData.EarnRank(AchievmentNames.DOUBLETKILLER, RankNames.GOLD);
+            achievmentData.AchievmentCompleted += this.AchievmentData_AchievmentCompleted;
+            achievmentData.RankEarned += this.AchievmentData_RankEarned;
+
+            achievmentData.AddScore(AchievmentNames.PYROMANIC, 15);
+
+            if (!achievmentData.IsCompleted(AchievmentNames.PYROMANIC))
+            {
+                Debug.WriteLine("Completed:" + achievmentData.GetPercentageCompleted(AchievmentNames.PYROMANIC));
+                achievmentData.SetCompleted(AchievmentNames.PYROMANIC);
+                Debug.WriteLine("Completed:" + achievmentData.GetPercentageCompleted(AchievmentNames.PYROMANIC));
+            }
+
+            achievmentData.AddScore(AchievmentNames.EXECUTIONER, 15);
+            achievmentData.AddScore(AchievmentNames.EXECUTIONER, 23);
+            achievmentData.EarnRank(AchievmentNames.EXECUTIONER, RankNames.GOLD);
 
             achievmentData.PrintStats();
+
+            achievmentData.AchievmentCompleted -= this.AchievmentData_AchievmentCompleted;
+            achievmentData.RankEarned -= this.AchievmentData_RankEarned;
+            
+        }
+
+        private void AchievmentData_RankEarned(object? sender, System.Tuple<string, string> data)
+        {
+            Debug.WriteLine("Was earned: " + data.Item1 +"\\" + data.Item2);
+        }
+
+        private void AchievmentData_AchievmentCompleted(object sender, string achievmentName)
+        {
+            Debug.WriteLine("Was completed: " + achievmentName);
         }
     }
 }

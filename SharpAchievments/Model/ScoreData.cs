@@ -1,4 +1,4 @@
-﻿namespace AchievmentSystem.Model
+﻿namespace SharpAchievments.Model
 {
     using System;
 

@@ -1,9 +1,9 @@
-﻿namespace AchievmentSystem
+﻿namespace SharpAchievments
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using AchievmentSystem.Model;
+    using SharpAchievments.Model;
 
     public class AchievmentDefinition
     {
@@ -11,7 +11,7 @@
 
         public Achievment GetAchievment(string achievmentName)
         {
-            var achievment = Achievments.FirstOrDefault(x => x.Name == achievmentName);
+            var achievment = this.Achievments.FirstOrDefault(x => x.Name == achievmentName);
             if (achievment == null)
             {
                 throw new Exception($"{achievmentName} is not a valid achievment");
