@@ -1,4 +1,4 @@
-﻿namespace SharpAchievments.Model
+﻿namespace SharpAchievements.Model
 {
     public class Rank
     {

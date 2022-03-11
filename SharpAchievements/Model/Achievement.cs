@@ -1,12 +1,12 @@
-﻿namespace SharpAchievments.Model
+﻿namespace SharpAchievements.Model
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Achievment
+    public class Achievement
     {
-        public Achievment(string name = "", List<Rank> ranks = null, string group = "")
+        public Achievement(string name = "", List<Rank> ranks = null, string group = "")
         {
             this.Name = name;
             if (ranks != null)
@@ -20,7 +20,7 @@
         public string Name { get; set; } = "";
         public List<Rank> Ranks { get; set; } = new List<Rank>();
 
-        public string DependsOnAchievmentName { get; set; } = "";
+        public string DependsOnAchievementName { get; set; } = "";
 
         public TimeSpan? TimeLimit { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace SharpAchievments.Model
+﻿namespace SharpAchievements.Model
 {
     using System;
 
@@ -6,7 +6,7 @@
     {
         private int score = 0;
 
-        public string AchievmentName { get; set; } = "";
+        public string AchievementName { get; set; } = "";
 
         public int Score
         {
@@ -36,7 +36,7 @@
 
         public override string ToString()
         {
-            return $"{this.AchievmentName}: {this.Score} ({this.EarnedRank})";
+            return $"{this.AchievementName}: {this.Score} ({this.EarnedRank})";
         }
     }
 }
