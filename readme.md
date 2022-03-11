@@ -1,7 +1,7 @@
-# SharpAchievments 
+# SharpAchievements 
 ![](../main/doc/SharpTrophy.png) 
 
-Simple achievment system for gamification of applications or games.
+Simple achievement system for gamification of applications or games.
 
 ## Currently implemented
 
