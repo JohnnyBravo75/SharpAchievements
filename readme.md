@@ -3,7 +3,7 @@
 
 Simple achievment system for gamification of applications or games.
 
-**Currently implemented**
+## Currently implemented
 
 *achievment definition
    *groups
@@ -14,7 +14,7 @@ Simple achievment system for gamification of applications or games.
   *events
   
 
-**Definition**
+## Definition
 
 ```
 
@@ -85,7 +85,7 @@ achievmentDefinition.Achievments.Add(new Achievment()
             
 ```
 
-**Usage**
+## Usage
 
 ```
   var achievmentData = new AchievmentData(achievmentDefinition);
@@ -111,4 +111,5 @@ achievmentDefinition.Achievments.Add(new Achievment()
 ## License
 
 [MIT](License.txt)
+
 unmodified icon by icon8
