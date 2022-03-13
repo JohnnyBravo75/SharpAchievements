@@ -42,7 +42,6 @@
             }
         }
 
-
         public string AddScore(string achievementName, int score)
         {
             var achievement = this.achievementDefinition.GetAchievment(achievementName);
@@ -146,7 +145,7 @@
             }
         }
 
-        private Rank GetRankFromScore(string achievementName, int score)
+        public Rank GetRankFromScore(string achievementName, int score)
         {
             var achievement = this.achievementDefinition.GetAchievment(achievementName);
             if (achievement == null)
@@ -159,7 +158,7 @@
             return rank;
         }
 
-        private ScoreData GetScoreData(string achievementName)
+        public ScoreData GetScoreData(string achievementName)
         {
             var achievement = this.achievementDefinition.GetAchievment(achievementName);
             if (achievement == null)

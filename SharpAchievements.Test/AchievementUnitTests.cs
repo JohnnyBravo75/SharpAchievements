@@ -30,7 +30,7 @@ namespace SharpAchievements.Test
     }
 
     [TestClass]
-    public class UnitTest1
+    public class AchievementUnitTests
     {
         private AchievementDefinition SetupAchievementDefinition()
         {
@@ -74,6 +74,59 @@ namespace SharpAchievements.Test
                         }
             });
             return achievementDefinition;
+        }
+
+        [TestMethod]
+        public void Test_Get_Completed_By_Score()
+        {
+            var achievementData = new AchievementData(SetupAchievementDefinition());
+            
+            achievementData.AddScore(AchievementNames.PYROMANIC, 20);
+            Assert.IsTrue(achievementData.IsCompleted(AchievementNames.PYROMANIC));
+
+            achievementData.AddScore(AchievementNames.EXECUTIONER, 60);
+            Assert.IsTrue(achievementData.IsCompleted(AchievementNames.EXECUTIONER));
+        }
+
+        [TestMethod]
+        public void Test_Get_Completed_Manual()
+        {
+            var achievementData = new AchievementData(SetupAchievementDefinition());
+
+            achievementData.SetCompleted(AchievementNames.PYROMANIC);
+            Assert.IsTrue(achievementData.IsCompleted(AchievementNames.PYROMANIC));
+
+            achievementData.SetCompleted(AchievementNames.EXECUTIONER);
+            Assert.IsTrue(achievementData.IsCompleted(AchievementNames.EXECUTIONER));
+        }
+
+        [TestMethod]
+        public void Test_Get_Completed_By_Rank()
+        {
+            var achievementData = new AchievementData(SetupAchievementDefinition());
+
+            achievementData.EarnRank(AchievementNames.PYROMANIC, RankNames.COMPLETED);
+            Assert.IsTrue(achievementData.IsCompleted(AchievementNames.PYROMANIC));
+
+            achievementData.EarnRank(AchievementNames.EXECUTIONER, RankNames.GOLD);
+            Assert.IsFalse(achievementData.IsCompleted(AchievementNames.EXECUTIONER));
+
+            achievementData.EarnRank(AchievementNames.EXECUTIONER, RankNames.PLATIN);
+            Assert.IsTrue(achievementData.IsCompleted(AchievementNames.EXECUTIONER));
+        }
+
+        [TestMethod]
+        public void Test_EarnRank_By_Score()
+        {
+            var achievementData = new AchievementData(SetupAchievementDefinition());
+
+            achievementData.AddScore(AchievementNames.PYROMANIC, 20);
+            var scoreData1 = achievementData.GetScoreData(AchievementNames.PYROMANIC);
+            Assert.AreEqual(scoreData1.EarnedRank, RankNames.COMPLETED);
+
+            achievementData.AddScore(AchievementNames.EXECUTIONER, 15);
+            var scoreData2 = achievementData.GetScoreData(AchievementNames.EXECUTIONER);
+            Assert.AreEqual(scoreData2.EarnedRank, RankNames.BRONZE);
         }
 
         [TestMethod]
