@@ -150,6 +150,9 @@ namespace SharpAchievements.Test
 
             achievementData.AddScore(AchievementNames.EXECUTIONER, 15);
             achievementData.AddScore(AchievementNames.EXECUTIONER, 23);
+
+            achievementData.AddScore(AchievementNames.EXECUTIONER, 22);
+
             achievementData.EarnRank(AchievementNames.EXECUTIONER, RankNames.GOLD);
 
             achievementData.PrintStats();

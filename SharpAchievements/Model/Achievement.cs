@@ -6,7 +6,9 @@
 
     public class Achievement
     {
-        public Achievement(string name = "", List<Rank> ranks = null, string group = "")
+        private decimal completedScore = -1;
+
+        public Achievement(string name = "", List<Rank> ranks = null, string group = "", decimal completedScore = 0)
         {
             this.Name = name;
             if (ranks != null)
@@ -14,11 +16,42 @@
                 this.Ranks = ranks;
             }
             this.Group = group;
+            this.CompletedScore = completedScore;
         }
 
         public string Group { get; set; } = "Common";
+
         public string Name { get; set; } = "";
+
+        public bool EranRanksFromScore { get; set; } = false;   
+
         public List<Rank> Ranks { get; set; } = new List<Rank>();
+
+        public decimal CompletedScore
+        {
+            get
+            {
+                if (this.completedScore > 0)
+                {
+                    return this.completedScore;
+                }
+
+                if (this.Ranks != null)
+                {
+                    var lastRank = this.Ranks.LastOrDefault();
+                    if (lastRank != null)
+                    {
+                        return lastRank.Score;
+                    }
+                }
+
+                return this.completedScore;
+            }
+            set
+            {
+                this.completedScore = value;
+            }
+        }
 
         public string DependsOnAchievementName { get; set; } = "";
 
@@ -31,24 +64,34 @@
 
         public bool IsCompleted(ScoreData scoreData)
         {
-            return this.GetPercentageCompleted(scoreData.EarnedRank) >= 100;
+            return scoreData.Score >= this.CompletedScore;  
         }
 
-        public decimal GetPercentageCompleted(string rankName)
+        public decimal GetPercentageCompleted(ScoreData scoreData)
         {
-            var currentPos = this.GetRankPosition(rankName);
-            if (currentPos < 0)
+            if (this.CompletedScore <= 0)
             {
-                return 0;
-            }
-            var maxPos = this.Ranks.Count();
-            if (maxPos == 0)
-            {
-                return 0;
+                return 0;   
             }
 
-            return (decimal)currentPos * 100 / maxPos;
+            return (decimal)scoreData.Score * 100 / this.CompletedScore;
         }
+
+        //public decimal GetPercentageFromRank(string rankName)
+        //{
+        //    var currentPos = this.GetRankPosition(rankName);
+        //    if (currentPos < 0)
+        //    {
+        //        return 0;
+        //    }
+        //    var maxPos = this.Ranks.Count();
+        //    if (maxPos == 0)
+        //    {
+        //        return 0;
+        //    }
+
+        //    return (decimal)currentPos * 100 / maxPos;
+        //}
 
         public int GetRankPosition(string rankName)
         {

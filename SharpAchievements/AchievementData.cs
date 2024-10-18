@@ -36,13 +36,20 @@
             foreach (var score in this.Scores)
             {
                 var achievement = this.achievementDefinition.GetAchievment(score.AchievementName);
-                var percentageCompleted = achievement.GetPercentageCompleted(score.EarnedRank);
+                var percentageCompleted = achievement.GetPercentageCompleted(score);
 
-                Debug.WriteLine($"{achievement.Group}: {score} - {percentageCompleted}%  :  {DateTime.UtcNow - score.DateStartedUtc}");
+                Debug.WriteLine($"{achievement.Group}: {score} - {percentageCompleted}%  :  Started: {score.DateStartedUtc}  CompletedScore: {achievement.CompletedScore}, IsCompleted: {score.IsCompleted}");
             }
         }
 
-        public string AddScore(string achievementName, int score)
+        public string AddScore(string achievementName, decimal score)
+        {
+            var scoreData = this.GetScoreData(achievementName);
+
+            return SetScore(achievementName, scoreData.Score + score);
+        }
+
+        public string SetScore(string achievementName, decimal score)
         {
             var achievement = this.achievementDefinition.GetAchievment(achievementName);
             if (achievement == null)
@@ -66,29 +73,19 @@
 
             if (scoreData != null)
             {
-                scoreData.Score += score;
-            }
-            else
-            {
-                scoreData = new ScoreData()
-                {
-                    AchievementName = achievementName,
-                    DateStartedUtc = DateTime.UtcNow,
-                    Score = score
-                };
+                scoreData.Score = score;
 
-                this.Scores.Add(scoreData);
+                if (scoreData.Score >= achievement.CompletedScore)
+                {
+                    scoreData.IsCompleted = true;
+                }
             }
 
             // Rank
-            this.EarnRankFromScore(achievementName, scoreData);
-
-            // Ended
-            if (achievement.IsCompleted(scoreData))
+            if (achievement.EranRanksFromScore)
             {
-                scoreData.DateEndedUtc = DateTime.UtcNow;
+                this.EarnRankFromScore(achievementName, scoreData);
             }
-
             return string.Empty;
         }
 
@@ -116,7 +113,7 @@
 
             var scoreData = this.GetScoreData(achievementName);
 
-            return achievement.GetPercentageCompleted(scoreData.EarnedRank);
+            return achievement.GetPercentageCompleted(scoreData);
         }
 
         public void SetCompleted(string achievementName)
@@ -127,17 +124,43 @@
                 return;
             }
 
+            var scoreData = this.GetScoreData(achievementName);
+            if (scoreData != null)
+            {
+                scoreData.IsCompleted = true;
+            }
+            else
+            {
+                scoreData = new ScoreData()
+                {
+                    AchievementName = achievementName,
+                    IsCompleted = true
+                };
+
+                this.Scores.Add(scoreData); 
+            }
+
+            // this.EarnLastRank(achievement);
+        }
+
+        private void EarnLastRank(Achievement achievement)
+        {
             var lastRank = achievement.Ranks.LastOrDefault();
             if (lastRank == null)
             {
                 return;
             }
 
-            this.EarnRank(achievementName, lastRank.Name);
+            this.EarnRank(achievement.Name, lastRank.Name);
         }
 
-        private void EarnRankFromScore(string achievementName, ScoreData scoreData)
+        private void EarnRankFromScore(string achievementName, ScoreData scoreData = null)
         {
+            if (scoreData == null)
+            {
+                scoreData = this.GetScoreData(achievementName);
+            }
+
             var rank = this.GetRankFromScore(achievementName, scoreData.Score);
             if (rank != null)
             {
@@ -145,7 +168,7 @@
             }
         }
 
-        public Rank GetRankFromScore(string achievementName, int score)
+        public Rank GetRankFromScore(string achievementName, decimal score)
         {
             var achievement = this.achievementDefinition.GetAchievment(achievementName);
             if (achievement == null)
@@ -167,6 +190,17 @@
             }
 
             var scoreData = this.Scores.FirstOrDefault(x => x.AchievementName == achievementName);
+
+            if (scoreData == null)
+            {
+                scoreData = new ScoreData()
+                {
+                    AchievementName = achievementName,
+                    DateStartedUtc = DateTime.UtcNow
+                };
+                this.Scores.Add(scoreData);
+            }
+
             return scoreData;
         }
 

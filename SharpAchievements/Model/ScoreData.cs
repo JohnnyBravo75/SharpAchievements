@@ -4,11 +4,29 @@
 
     public class ScoreData
     {
-        private int score = 0;
+        private decimal score = 0;
+        private bool isCompleted;
+
+        public bool IsCompleted
+        {
+            get
+            {
+                return isCompleted;
+            }
+            set
+            {
+                this.isCompleted = value;
+
+                if (this.isCompleted)
+                {
+                    this.DateEndedUtc = DateTime.UtcNow;
+                }
+            }
+        }
 
         public string AchievementName { get; set; } = "";
 
-        public int Score
+        public decimal Score
         {
             get
             {
@@ -28,6 +46,7 @@
                 }
             }
         }
+        
         public string EarnedRank { get; set; } = "";
 
         public DateTime? DateStartedUtc { get; set; }
