@@ -11,15 +11,13 @@
         {
             get
             {
-                return isCompleted;
+                return this.isCompleted;
             }
             set
             {
-                this.isCompleted = value;
-
-                if (this.isCompleted)
+                if (this.isCompleted != value)
                 {
-                    this.DateEndedUtc = DateTime.UtcNow;
+                    this.isCompleted = value;
                 }
             }
         }
@@ -56,6 +54,20 @@
         public override string ToString()
         {
             return $"{this.AchievementName}: {this.Score} ({this.EarnedRank})";
+        }
+
+        public bool IsStarted => this.DateStartedUtc.HasValue;
+
+        public bool IsEnded => this.DateEndedUtc.HasValue;
+
+        public void Start()
+        {
+            this.DateStartedUtc = DateTime.UtcNow;
+        }
+
+        public void End()
+        {
+            this.DateEndedUtc = DateTime.UtcNow;
         }
     }
 }

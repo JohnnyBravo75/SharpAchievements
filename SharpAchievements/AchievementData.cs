@@ -42,11 +42,46 @@
             }
         }
 
+        public void Start(string achievementName)
+        {
+            var scoreData = this.GetScoreData(achievementName);
+            scoreData.Start(); 
+        }
+
+        public bool IsStarted(string achievementName)
+        {
+            var scoreData = this.GetScoreData(achievementName);
+            return scoreData.IsStarted;
+        }
+
+        public void End(string achievementName)
+        {
+            var scoreData = this.GetScoreData(achievementName);
+            ValidateStarted(scoreData);
+
+            scoreData.End();
+        }
+
+        public bool IsEnded(string achievementName)
+        {
+            var scoreData = this.GetScoreData(achievementName);
+            return scoreData.IsEnded;
+        }
+
+        
+        private static void ValidateStarted(ScoreData scoreData)
+        {
+            if (!scoreData.IsStarted)
+            {
+                throw new Exception($"Achievement '{scoreData.AchievementName}' was not started");
+            }
+        }
+
         public string AddScore(string achievementName, decimal score)
         {
             var scoreData = this.GetScoreData(achievementName);
 
-            return SetScore(achievementName, scoreData.Score + score);
+            return this.SetScore(achievementName, scoreData.Score + score);
         }
 
         public string SetScore(string achievementName, decimal score)
@@ -71,18 +106,22 @@
             // Score
             var scoreData = this.GetScoreData(achievementName);
 
-            if (scoreData != null)
-            {
-                scoreData.Score = score;
+            ValidateStarted(scoreData);
 
-                if (scoreData.Score >= achievement.CompletedScore)
+            scoreData.Score = score;
+            
+            if (scoreData.Score >= achievement.CompletedScore)
+            {
+                scoreData.IsCompleted = true;
+                if (achievement.AutoEndWhenCompleted)
                 {
-                    scoreData.IsCompleted = true;
+                    scoreData.End();
                 }
             }
+            
 
             // Rank
-            if (achievement.EranRanksFromScore)
+            if (achievement.AutoEarnRankFromScore)
             {
                 this.EarnRankFromScore(achievementName, scoreData);
             }
@@ -125,20 +164,12 @@
             }
 
             var scoreData = this.GetScoreData(achievementName);
-            if (scoreData != null)
+            
+            scoreData.IsCompleted = true;
+            if (achievement.AutoEndWhenCompleted)
             {
-                scoreData.IsCompleted = true;
-            }
-            else
-            {
-                scoreData = new ScoreData()
-                {
-                    AchievementName = achievementName,
-                    IsCompleted = true
-                };
-
-                this.Scores.Add(scoreData); 
-            }
+                scoreData.End();
+            }   
 
             // this.EarnLastRank(achievement);
         }
@@ -195,9 +226,14 @@
             {
                 scoreData = new ScoreData()
                 {
-                    AchievementName = achievementName,
-                    DateStartedUtc = DateTime.UtcNow
+                    AchievementName = achievementName                    
                 };
+
+                if (achievement.AutoStart)
+                {
+                    scoreData.Start();
+                }   
+
                 this.Scores.Add(scoreData);
             }
 

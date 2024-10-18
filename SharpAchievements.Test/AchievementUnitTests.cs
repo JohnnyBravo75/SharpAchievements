@@ -139,6 +139,7 @@ namespace SharpAchievements.Test
             achievementData.AchievementCompleted += this.AchievementData_AchievmentCompleted;
             achievementData.RankEarned += this.AchievementData_RankEarned;
 
+            achievementData.Start(AchievementNames.PYROMANIC);
             achievementData.AddScore(AchievementNames.PYROMANIC, 15);
 
             if (!achievementData.IsCompleted(AchievementNames.PYROMANIC))
@@ -148,6 +149,7 @@ namespace SharpAchievements.Test
                 Debug.WriteLine("Completed: " + achievementData.GetPercentageCompleted(AchievementNames.PYROMANIC) + "%");
             }
 
+            achievementData.Start(AchievementNames.EXECUTIONER);
             achievementData.AddScore(AchievementNames.EXECUTIONER, 15);
             achievementData.AddScore(AchievementNames.EXECUTIONER, 23);
 

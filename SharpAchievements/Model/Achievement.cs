@@ -23,7 +23,11 @@
 
         public string Name { get; set; } = "";
 
-        public bool EranRanksFromScore { get; set; } = false;   
+        public bool AutoEarnRankFromScore { get; set; } = false;
+
+        public bool AutoStart { get; set; } = false;
+
+        public bool AutoEndWhenCompleted { get; set; } = false;
 
         public List<Rank> Ranks { get; set; } = new List<Rank>();
 
@@ -64,6 +68,11 @@
 
         public bool IsCompleted(ScoreData scoreData)
         {
+            if (scoreData.IsCompleted)
+            {
+                return true;
+            }
+
             return scoreData.Score >= this.CompletedScore;  
         }
 
