@@ -10,8 +10,9 @@
     {
         private AchievementDefinition achievementDefinition;
 
-        public event EventHandler<string> AchievementCompleted;
-        public event EventHandler<Tuple<string, string>> RankEarned;
+        public event EventHandler<Achievement> AchievementCompleted;
+        public event EventHandler<Tuple<Achievement, Rank>> RankEarned;
+        public event EventHandler<Tuple<Achievement, Badge>> BadgeEarned;
 
 
         public AchievementData(AchievementDefinition achievementDefinition)
@@ -169,7 +170,9 @@
             if (achievement.AutoEndWhenCompleted)
             {
                 scoreData.End();
-            }   
+            }
+
+            this.AchievementCompleted?.Invoke(this, achievement);
 
             // this.EarnLastRank(achievement);
         }
@@ -195,7 +198,7 @@
             var rank = this.GetRankFromScore(achievementName, scoreData.Score);
             if (rank != null)
             {
-                this.SetRank(scoreData, rank.Name);
+                this.SetRank(scoreData, rank);
             }
         }
 
@@ -240,6 +243,30 @@
             return scoreData;
         }
 
+        public void EarnBadge(string achievementName, string badgeName)
+        {
+            var achievement = this.achievementDefinition.GetAchievment(achievementName);
+            if (achievement == null)
+            {
+                return;
+            }
+
+            var scoreData = this.GetScoreData(achievementName);
+
+            if (!achievement.IsValidBadge(badgeName))
+            {
+                throw new Exception("{badgeName} is not a valid badge");
+            }
+
+            if (!scoreData.Badges.Contains(badgeName))
+            {
+                scoreData.Badges.Add(badgeName);
+
+                this.BadgeEarned?.Invoke(this, new Tuple<Achievement, Badge>(achievement, achievement.GetBadge(badgeName)));
+            }           
+        }
+
+
         public void EarnRank(string achievementName, string rankName)
         {
             var achievement = this.achievementDefinition.GetAchievment(achievementName);
@@ -255,34 +282,27 @@
 
             var scoreData = this.GetScoreData(achievementName);
 
-            if (scoreData == null)
-            {
-                scoreData = new ScoreData()
-                {
-                    AchievementName = achievementName,
-                };
-                this.Scores.Add(scoreData);
-            }
-
-
-            this.SetRank(scoreData, rankName);
-
+            this.SetRank(scoreData, achievement.GetRank(rankName));
+            
         }
 
-        private void SetRank(ScoreData scoreData, string rankName)
+       
+
+        private void SetRank(ScoreData scoreData, Rank rank)
         {
-            if (scoreData.EarnedRank != rankName)
+            if (rank == null)
             {
-                var wasCompleted = this.IsCompleted(scoreData.AchievementName);
+                return;
+            }
 
-                scoreData.EarnedRank = rankName;
+            if (!string.IsNullOrEmpty(rank.Name) && 
+                scoreData.EarnedRank != rank.Name)
+            {
+                scoreData.EarnedRank = rank.Name;
 
-                this.RankEarned?.Invoke(this, new Tuple<string, string>(scoreData.AchievementName, rankName));
+                var achievement = this.achievementDefinition.GetAchievment(scoreData.AchievementName);
 
-                if (!wasCompleted && this.IsCompleted(scoreData.AchievementName))
-                {
-                    this.AchievementCompleted?.Invoke(this, scoreData.AchievementName);
-                }
+                this.RankEarned?.Invoke(this, new Tuple<Achievement, Rank>(achievement, rank));
             }
         }
 

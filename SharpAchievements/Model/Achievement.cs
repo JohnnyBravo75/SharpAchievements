@@ -25,11 +25,13 @@
 
         public bool AutoEarnRankFromScore { get; set; } = false;
 
-        public bool AutoStart { get; set; } = false;
+        public bool AutoStart { get; set; } = true;
 
-        public bool AutoEndWhenCompleted { get; set; } = false;
+        public bool AutoEndWhenCompleted { get; set; } = true;
 
         public List<Rank> Ranks { get; set; } = new List<Rank>();
+
+        public List<Badge> Badges { get; set; } = new List<Badge>();
 
         public decimal CompletedScore
         {
@@ -139,6 +141,21 @@
         public bool IsValidRank(string rankName)
         {
             return this.GetRank(rankName) != null;
+        }
+
+
+        public Badge GetBadge(string badgeName)
+        {
+            if (string.IsNullOrEmpty(badgeName))
+            {
+                return null;
+            }
+            return this.Badges.FirstOrDefault(x => x.Name == badgeName);
+        }
+
+        public bool IsValidBadge(string badgeName)
+        {
+            return this.GetBadge(badgeName) != null;
         }
     }
 }

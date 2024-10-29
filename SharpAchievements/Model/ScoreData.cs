@@ -1,6 +1,7 @@
 ﻿namespace SharpAchievements.Model
 {
     using System;
+    using System.Collections.Generic;
 
     public class ScoreData
     {
@@ -46,6 +47,8 @@
         }
         
         public string EarnedRank { get; set; } = "";
+
+        public List<string> Badges { get; set; } = new List<string>();   
 
         public DateTime? DateStartedUtc { get; set; }
 

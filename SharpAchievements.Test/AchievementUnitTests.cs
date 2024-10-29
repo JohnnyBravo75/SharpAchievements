@@ -29,6 +29,13 @@ namespace SharpAchievements.Test
         public const string PLATIN = "Platin";
     }
 
+    public class BadgeNames
+    {
+        public const string PEFECTIONIST = "Pefektionist";
+        public const string MORNINGMAN = "MorningMan";
+    }   
+    
+
     [TestClass]
     public class AchievementUnitTests
     {
@@ -44,7 +51,16 @@ namespace SharpAchievements.Test
                                     Name=RankNames.COMPLETED,
                                     Score = 20
                                 }
-                        }
+                        },
+                Badges = { new Badge()
+                                {
+                                    Name = BadgeNames.PEFECTIONIST                                    
+                                },
+                                new Badge()
+                                {
+                                    Name = BadgeNames.MORNINGMAN    
+                                }
+                        }   
             });
 
             achievementDefinition.Achievements.Add(new Achievement()
@@ -138,6 +154,7 @@ namespace SharpAchievements.Test
 
             achievementData.AchievementCompleted += this.AchievementData_AchievmentCompleted;
             achievementData.RankEarned += this.AchievementData_RankEarned;
+            achievementData.BadgeEarned += this.AchievementData_BadgeEarned; 
 
             achievementData.Start(AchievementNames.PYROMANIC);
             achievementData.AddScore(AchievementNames.PYROMANIC, 15);
@@ -161,17 +178,25 @@ namespace SharpAchievements.Test
 
             achievementData.AchievementCompleted -= this.AchievementData_AchievmentCompleted;
             achievementData.RankEarned -= this.AchievementData_RankEarned;
+            achievementData.BadgeEarned -= this.AchievementData_BadgeEarned;
 
         }
 
-        private void AchievementData_RankEarned(object? sender, System.Tuple<string, string> data)
+        private void AchievementData_BadgeEarned(object? sender, System.Tuple<Achievement, Badge> data)
         {
-            Debug.WriteLine("Was earned: " + data.Item1 + "\\" + data.Item2);
+            Debug.WriteLine("Badge earned: " + data.Item1.Name + "\\" + data.Item2.Name);
         }
 
-        private void AchievementData_AchievmentCompleted(object sender, string achievementName)
+        private void AchievementData_RankEarned(object? sender, System.Tuple<Achievement, Rank> data)
         {
-            Debug.WriteLine("Was completed: " + achievementName);
+            Debug.WriteLine("Rank earned: " + data.Item1.Name + "\\" + data.Item2.Name);
+        }
+
+        private void AchievementData_AchievmentCompleted(object sender, Achievement achievement)
+        {
+            Debug.WriteLine("Achievement completed: " + achievement.Name);
         }
     }
+
+
 }
